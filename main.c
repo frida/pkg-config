@@ -500,6 +500,8 @@ main (int argc, char **argv)
   setlocale (LC_MESSAGES, "");
 #endif
 
+  glib_init ();
+
   /* This is here so that we get debug spew from the start,
    * during arg parsing
    */
