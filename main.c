@@ -494,6 +494,8 @@ main (int argc, char **argv)
   GError *error = NULL;
   GOptionContext *opt_context;
 
+  glib_init ();
+
   /* This is here so that we get debug spew from the start,
    * during arg parsing
    */
