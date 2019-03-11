@@ -1160,38 +1160,55 @@ comparison_to_str (ComparisonType comparison)
   return "???";
 }
 
-static void
-max_len_foreach (gpointer key, gpointer value, gpointer data)
+static gint
+packages_sort_cb (gconstpointer a,
+                  gconstpointer b)
 {
-  int *mlen = data;
+  const Package *package_a = *((Package **) a);
+  const Package *package_b = *((Package **) b);
 
-  *mlen = MAX (*mlen, strlen (key));
-}
-
-static void
-packages_foreach (gpointer key, gpointer value, gpointer data)
-{
-  Package *pkg = value;
-  char *pad;
-
-  pad = g_strnfill (GPOINTER_TO_INT (data) - strlen (pkg->key), ' ');
-      
-  printf ("%s%s%s - %s\n",
-          pkg->key, pad, pkg->name, pkg->description);
-
-  g_free (pad);
+  return g_strcmp0 (package_a->key, package_b->key);
 }
 
 void
 print_package_list (void)
 {
-  int mlen = 0;
+  gsize mlen = 0;
+  GPtrArray *packages_array = NULL;
+  GHashTableIter iter;
+  gpointer key, value;
+  guint i;
 
   ignore_requires = TRUE;
   ignore_requires_private = TRUE;
 
-  g_hash_table_foreach (packages, max_len_foreach, &mlen);
-  g_hash_table_foreach (packages, packages_foreach, GINT_TO_POINTER (mlen + 1));
+  /* Add the packages to a pointer array and sort by pkg->key first, to give
+   * deterministic output. While doing that, work out the maximum key length
+   * so we can pad the output correctly. */
+  packages_array = g_ptr_array_sized_new (g_hash_table_size (packages));
+  g_hash_table_iter_init (&iter, packages);
+  while (g_hash_table_iter_next (&iter, &key, &value))
+    {
+      g_ptr_array_add (packages_array, value);
+      mlen = MAX (mlen, strlen (key));
+    }
+
+  g_ptr_array_sort (packages_array, packages_sort_cb);
+
+  for (i = 0; i < packages_array->len; i++)
+    {
+        Package *pkg = g_ptr_array_index (packages_array, i);
+        char *pad;
+
+        pad = g_strnfill (mlen + 1 - strlen (pkg->key), ' ');
+
+        printf ("%s%s%s - %s\n",
+                pkg->key, pad, pkg->name, pkg->description);
+
+        g_free (pad);
+    }
+
+  g_ptr_array_free (packages_array, TRUE);
 }
 
 void
