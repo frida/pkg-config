@@ -28,6 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <locale.h>
 
 #ifdef G_OS_WIN32
 #define STRICT
@@ -493,6 +494,11 @@ main (int argc, char **argv)
   FILE *log = NULL;
   GError *error = NULL;
   GOptionContext *opt_context;
+
+  setlocale (LC_CTYPE, "");
+#ifdef LC_MESSAGES
+  setlocale (LC_MESSAGES, "");
+#endif
 
   /* This is here so that we get debug spew from the start,
    * during arg parsing
