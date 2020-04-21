@@ -50,7 +50,7 @@ require setting some autoconf cache variables in cases where glib would
 need to run a program to determine the correct value. See the glib
 documentation:
 
-http://developer.gnome.org/glib/stable/glib-cross-compiling.html
+https://developer.gnome.org/glib/stable/glib-cross-compiling.html
 
 If you need to use the bundled glib on Mac OS X, you'll most likely need
 to build for a single architecture rather than as a universal binary.
