@@ -1,7 +1,7 @@
 pkg-config is a script to make putting together all the build
 flags when compiling/linking a lot easier.
 
-Report bugs at http://bugzilla.freedesktop.org/
+Report bugs at https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues
 
 To use pkg-config, do something like the following in your configure.ac
 
